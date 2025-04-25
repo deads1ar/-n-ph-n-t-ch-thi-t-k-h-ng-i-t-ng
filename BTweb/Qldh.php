@@ -89,7 +89,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <th>Địa chỉ</th>
                     <th>Thời gian đặt</th>
                     <th>Tổng tiền</th>
-                    <th>Tình trạng</th>
+                    <th>Chi tiết đơn hàng</th>
                     <th>Cập nhật</th>
                 </tr>
             </thead>
@@ -101,7 +101,9 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= htmlspecialchars($order['DC']) ?></td>
                         <td><?= $order['TIME'] ?></td>
                         <td><?= number_format($order['TONG'], 0, ',', '.') . ' đ' ?></td>
-                        <td><?= $order['TRANGTHAI'] ?></td>
+                        <td>
+                            <a href="detailbill.php?iddh=<?= $order['IDDH'] ?>" class="btn btn-sm btn-info">Xem chi tiết</a>
+                        </td>
                         <td>
                             <form method="post" class="d-flex flex-column">
                                 <input type="hidden" name="iddh" value="<?= $order['IDDH'] ?>">
