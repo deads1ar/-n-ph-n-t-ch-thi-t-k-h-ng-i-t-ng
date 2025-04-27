@@ -130,7 +130,8 @@ $row0 = $result0->fetch_assoc();
                     <td class="total-price"><?php echo number_format(($row['GIABANKM'] * $quantity),0,"",".") ."đ"; ?></td>
                     <td> 
                     <button onclick="removeItem('<?php echo $productid; ?>', this)">Xóa</button>
-                        <script>function removeItem(productId, button) {
+                        <script>
+                        function removeItem(productId, button) {
                         let row = button.closest("tr"); // Find the row of the item
                         row.remove(); // Remove the row from the table
 
@@ -262,7 +263,7 @@ function updateCookieQuantity(productId, quantity) {
                                 </div>
                                 <div class="checkout__order__total">
                                     <ul>
-                                        <li>Tổng <span><?php echo number_format($tong_gio_hang,0,"",".");?>VND</span></li>
+                                        <li id="tong_gio_hang">Tổng <span><?php echo number_format($tong_gio_hang,0,"",".");?>VND</span></li>
                                     </ul>
                                 </div>
                                 <div class="checkout__order__widget">
@@ -364,6 +365,26 @@ function updateCookieQuantity(productId, quantity) {
             if (data.status === "error") {
                 alert(data.message);
             } else if (data.status === "success") {
+                //SET TONG DON HANG TO 0
+                document.getElementById('tong_gio_hang').innerHTML = 'Tổng <span>0 VND</span>';
+                //DELETE ALL PRODUCT FROM CART
+                let table = document.querySelector("table"); // Find the table
+                if (table) {
+                    let rows = table.querySelectorAll("tr"); // Select all rows
+                    rows.forEach((row, index) => {
+                        if (index !== 0) { 
+                            // If you want to keep the header (first row), skip index 0
+                            row.remove();
+                        }
+                    });
+                }
+                //DELETE ALL PRODUCT FROM FROM ABOVE TONG
+                document.querySelector('.checkout__order__product ul').innerHTML = `
+                <li>
+                    <span class="top__text">Sản phẩm</span>
+                    <span class="top__text__right">Đơn giá</span>
+                </li>
+                `;
                 alert(data.message);
                 // Optionally redirect user to an order confirmation page
             }

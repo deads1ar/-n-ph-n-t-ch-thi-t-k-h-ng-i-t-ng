@@ -1,5 +1,4 @@
 <?php
-print_r($_COOKIE);
         // Connect to database
     $conn = new mysqli("localhost", "root", "", "web_db");
     if ($conn->connect_error) {
@@ -7,8 +6,6 @@ print_r($_COOKIE);
     }
     if(isset($_GET['id']))
     $id = $_GET['id'];
-    var_dump($id); // Debug output
-
     $sql="SELECT * FROM SP WHERE IDSP = $id";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
@@ -155,6 +152,10 @@ print_r($_COOKIE);
                                 <li>
                                     <span>Trạng thái:</span>
                                         <p>Còn hàng</p>
+                                    </li>
+                                <li>
+                                    <span>Hãng sản phẩm:</span>
+                                        <p><?php $IDLSP = $row['IDLSP']; $rows = $conn->query("SELECT TENLOAI FROM loaisp WHERE IDLSP = '$IDLSP'")->fetch_assoc(); echo $rows['TENLOAI'];?></p>
                                     </li>
                             </ul>
                         </div>

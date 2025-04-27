@@ -122,13 +122,13 @@
                                     <div class="filter-range-wrap">
                                         <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content" 
                                              data-min="1000000" 
-                                             data-max="5000000">
+                                             data-max="9000000">
                                         </div>
                                         <div class="range-slider">
                                             <div class="price-input">
                                                 <p>Giá:</p>
                                                 <input type="text" id="minamount" name="min_price" value="<?php echo isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : '1000000'; ?>" readonly>
-                                                <input type="text" id="maxamount" name="max_price" value="<?php echo isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : '5000000'; ?>" readonly>
+                                                <input type="text" id="maxamount" name="max_price" value="<?php echo isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : '9000000'; ?>" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -381,11 +381,11 @@
 
         // Lấy giá trị min_price và max_price từ PHP
         var minPrice = <?php echo isset($_GET['min_price']) ? (int)$_GET['min_price'] : 1000000; ?>;
-        var maxPrice = <?php echo isset($_GET['max_price']) ? (int)$_GET['max_price'] : 5000000; ?>;
+        var maxPrice = <?php echo isset($_GET['max_price']) ? (int)$_GET['max_price'] : 9000000; ?>;
 
         // Đảm bảo giá trị nằm trong khoảng hợp lệ
-        minPrice = Math.max(1000000, Math.min(minPrice, 5000000));
-        maxPrice = Math.max(minPrice, Math.min(maxPrice, 5000000));
+        minPrice = Math.max(1000000, Math.min(minPrice, 9000000));
+        maxPrice = Math.max(minPrice, Math.min(maxPrice, 9000000));
 
         // Định dạng giá trị ban đầu cho input
         $("#minamount").val(formatNumber(minPrice));
@@ -394,7 +394,7 @@
         $(".price-range").slider({
             range: true,
             min: 1000000, // Giá trị tối thiểu của thanh trượt
-            max: 5000000, // Giá trị tối đa của thanh trượt
+            max: 9000000, // Giá trị tối đa của thanh trượt
             values: [minPrice, maxPrice], // Giá trị hiện tại từ form
             slide: function(event, ui) {
                 $("#minamount").val(formatNumber(ui.values[0]));
