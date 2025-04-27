@@ -199,7 +199,11 @@
                                 ?>
                                 <?php
                                 /* PHP FOR PAGE NAVIGATION */
-                                $totalproduct = $conn->query("SELECT COUNT(*) AS count FROM sp JOIN loaisp ON loaisp.IDLSP = sp.IDLSP WHERE loaisp.TENLOAI = '$product'")->fetch_assoc()['count'];
+                                if(!$product)
+                                $sql = "SELECT COUNT(*) AS count FROM sp JOIN loaisp ON loaisp.IDLSP = sp.IDLSP";
+                                else
+                                $sql = "SELECT COUNT(*) AS count FROM sp JOIN loaisp ON loaisp.IDLSP = sp.IDLSP WHERE loaisp.TENLOAI = '$product'";
+                                $totalproduct = $conn->query($sql)->fetch_assoc()['count'];
                                 $totalpage = ceil($totalproduct / $limit);
                                 ?>
                         <div class="col-lg-12 text-center">
