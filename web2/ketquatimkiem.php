@@ -7,7 +7,7 @@ if ($conn->connect_error) {
 // Get search parameters
 $keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
 $brands = isset($_GET['brand']) ?  $_GET['brand'] : [];
-$min_price = isset($_GET['min_price']) ? (int)$_GET['min_price'] : 1000000;
+$min_price = isset($_GET['min_price']) ? (int)$_GET['min_price'] : 1;
 $max_price = isset($_GET['max_price']) ? (int)$_GET['max_price'] : 9000000;
 $current_page = basename($_SERVER['SCRIPT_NAME']);
 if (!isset($_GET['page'])) {
@@ -18,7 +18,7 @@ if (!isset($_GET['page'])) {
     header('Location: ' . $_SERVER['PHP_SELF'] . '?page=1'
         . (!empty($keyword) ? '&keyword=' . urlencode($keyword) : '')
         . $brands_query
-        . (!empty($max_price) ? '&max_price=' . $max_price : '1000000')
+        . (!empty($max_price) ? '&max_price=' . $max_price : '1')
         . (!empty($min_price) ? '&min_price=' . $min_price : '5000000'));
     exit(); // Stop further execution after redirect
 }
@@ -134,12 +134,12 @@ if (!isset($_GET['page'])) {
                                         <h4>TÌM THEO GIÁ</h4>
                                     </div>
                                     <div class="filter-range-wrap">
-                                        <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content" data-min="1000000" data-max="9000000"></div>
+                                        <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content" data-min="1" data-max="9000000"></div>
                                         <div class="range-slider">
                                             <div class="price-input">
                                                 <p>Giá:</p>
-                                                <input type="text" id="minamount" name="min_price" value="<?php echo isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : '1000000'; ?>" readonly>
-                                                <input type="text" id="maxamount" name="max_price" value="<?php echo isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : '9000000'; ?>" readonly>
+                                                <input style="text-align: center;" type="text" id="minamount" name="min_price" value="<?php echo isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : '1'; ?>" readonly>
+                                                <input style="text-align: center;" type="text" id="maxamount" name="max_price" value="<?php echo isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : '9000000'; ?>" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -407,11 +407,11 @@ $totalpage = ceil($totalproduct / $limit);
         }
 
         // Lấy giá trị min_price và max_price từ PHP
-        var minPrice = <?php echo isset($_GET['min_price']) ? (int)$_GET['min_price'] : 1000000; ?>;
+        var minPrice = <?php echo isset($_GET['min_price']) ? (int)$_GET['min_price'] : 1; ?>;
         var maxPrice = <?php echo isset($_GET['max_price']) ? (int)$_GET['max_price'] : 9000000; ?>;
 
         // Đảm bảo giá trị nằm trong khoảng hợp lệ
-        minPrice = Math.max(1000000, Math.min(minPrice, 9000000));
+        minPrice = Math.max(1, Math.min(minPrice, 9000000));
         maxPrice = Math.max(minPrice, Math.min(maxPrice, 9000000));
 
         // Định dạng giá trị ban đầu cho input
@@ -420,7 +420,7 @@ $totalpage = ceil($totalproduct / $limit);
         // Khởi tạo thanh trượt với giá trị từ form
         $(".price-range").slider({
             range: true,
-            min: 1000000, // Giá trị tối thiểu của thanh trượt
+            min: 1, // Giá trị tối thiểu của thanh trượt
             max: 9000000, // Giá trị tối đa của thanh trượt
             values: [minPrice, maxPrice], // Giá trị hiện tại từ form
             slide: function(event, ui) {
