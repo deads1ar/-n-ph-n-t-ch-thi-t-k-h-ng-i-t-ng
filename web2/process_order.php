@@ -3,7 +3,15 @@ session_start();
 $conn = mysqli_connect("localhost","root","","web_db");
 $userCartCookie = "cart_" . $_SESSION["IDKH"];
 $cartItems = json_decode($_COOKIE[$userCartCookie] ?? "{}", true);
-//$diachi = $_POST['address'];
+
+// Read the raw POST body
+$rawData = file_get_contents("php://input");
+
+// Decode the JSON into a PHP array
+$data = json_decode($rawData, true); // `true` makes it an associative array
+
+// Now you can access the 'address'
+$diachi = $data['address'];
 //echo $diachi;
 
 if (empty($cartItems)) {
@@ -24,9 +32,9 @@ foreach ($cartItems as $productId => $quantity) {
 }
 
 // Insert into `dh`
-$sqlInsertDH = "INSERT INTO dh (IDKH, TONG) VALUES (?, ?)";
+$sqlInsertDH = "INSERT INTO dh (IDKH, TONG, DC) VALUES (?, ?, ?)";
 $stmtDH = $conn->prepare($sqlInsertDH);
-$stmtDH->bind_param("si", $_SESSION["IDKH"], $tongTien);
+$stmtDH->bind_param("sis", $_SESSION["IDKH"], $tongTien, $diachi);
 $stmtDH->execute();
 
 // Get IDDH for `ctdh` insert
@@ -41,5 +49,7 @@ foreach ($cartItems as $productId => $quantity) {
 }
 
 echo json_encode(["status" => "success", "message" => "Đã đặt hàng thành công!"]);
-
+// Clear the cart cookie after successful purchase
+setcookie($userCartCookie, '', time() - 3600, '/');
+unset($_COOKIE[$userCartCookie]);
 ?>

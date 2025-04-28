@@ -6,7 +6,7 @@ $id = $_SESSION['IDKH'];
 else
 header("location:dangnhap.html");
 $iddh = $_GET['IDDH'];
-$sql0 = "SELECT DISTINCT DC,SDT,NAME,TONG,TRANGTHAI,TIME, DATE_FORMAT(TIME, '%Y-%m-%d') AS formatted_date FROM dh JOIN ctdh on dh.IDDH = ctdh.IDDH JOIN kh on kh.IDKH = dh.IDKH where ctdh.IDDH = '$iddh'";
+$sql0 = "SELECT DISTINCT dh.DC,SDT,NAME,TONG,TRANGTHAI,TIME, DATE_FORMAT(TIME, '%Y-%m-%d') AS formatted_date FROM dh JOIN ctdh on dh.IDDH = ctdh.IDDH JOIN kh on kh.IDKH = dh.IDKH where ctdh.IDDH = '$iddh'";
 $result0 = $conn->query($sql0);
 $row0 = $result0->fetch_assoc();
 ?>

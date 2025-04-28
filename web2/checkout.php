@@ -220,7 +220,7 @@ function updateCookieQuantity(productId, quantity) {
                             <div class="col-lg-12">
                                 <div class="checkout__form__input">
                                     <p>Địa chỉ <span>*</span></p>
-                                    <input name="address" type="text" value="<?php echo $row0['DC'];?>" placeholder="Địa chỉ nhà " >
+                                    <input id="addressInput" name="address" type="text" value="<?php echo $row0['DC'];?>" placeholder="Địa chỉ nhà " >
                                 </div>
                             </div>
                             
@@ -356,9 +356,11 @@ function updateCookieQuantity(productId, quantity) {
     }
     
     // Send AJAX request to backend
+    let address = document.getElementById("addressInput").value;
     fetch("process_order.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body:  JSON.stringify({ address: address })
     })
         .then(response => response.json())
         .then(data => {
