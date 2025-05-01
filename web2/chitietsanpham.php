@@ -1,15 +1,33 @@
 <?php
-        // Connect to database
-    $conn = new mysqli("localhost", "root", "", "web_db");
-    if ($conn->connect_error) {
-        die("Kết nối thất bại: " . $conn->connect_error);
-    }
-    if(isset($_GET['id']))
+// Connect to database
+$conn = new mysqli("localhost", "root", "", "web_db");
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
+}
+if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $sql="SELECT * FROM SP WHERE IDSP = $id";
-    $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
+}
+
+// Truy vấn thông tin sản phẩm hiện tại
+$sql = "SELECT sp.*, loaisp.TENLOAI 
+        FROM sp 
+        JOIN loaisp ON sp.IDLSP = loaisp.IDLSP 
+        WHERE sp.IDSP = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+
+// Truy vấn sản phẩm liên quan (cùng IDLSP, loại trừ sản phẩm hiện tại, giới hạn 4 sản phẩm)
+$idlsp = $row['IDLSP'];
+$sql_related = "SELECT * FROM sp WHERE IDLSP = ? AND IDSP != ? LIMIT 4";
+$stmt_related = $conn->prepare($sql_related);
+$stmt_related->bind_param("ii", $idlsp, $id);
+$stmt_related->execute();
+$result_related = $stmt_related->get_result();
 ?>
+
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -23,8 +41,7 @@
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Css Styles -->
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
@@ -35,6 +52,63 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+
+    <!-- Custom CSS for Quantity Selector -->
+    <style>
+        .quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa các phần tử */
+    background: #f8f8f8; /* Màu nền nhẹ */
+    padding: 5px;
+    border-radius: 8px; /* Bo góc */
+    border: 1px solid #e0e0e0; /* Viền nhẹ */
+    width: fit-content; /* Độ rộng tự động */
+}
+
+.quantity-selector button {
+    width: 32px;
+    height: 32px;
+    border: none; /* Bỏ viền mặc định */
+    background: #ffffff; /* Nền trắng cho nút */
+    color: #333; /* Màu chữ/icon */
+    font-size: 16px; /* Kích thước chữ */
+    font-weight: bold; /* Độ đậm chữ */
+    cursor: pointer;
+    border-radius: 6px; /* Bo góc nút */
+    transition: background 0.3s, transform 0.1s; /* Hiệu ứng chuyển màu và nhấn */
+}
+
+.quantity-selector button:hover {
+    background: #e0e0e0; /* Màu nền khi hover */
+}
+
+.quantity-selector button:active {
+    transform: scale(0.95); /* Hiệu ứng nhấn */
+}
+
+.quantity-selector input {
+    width: 50px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid #e0e0e0; /* Viền nhẹ */
+    border-radius: 6px; /* Bo góc */
+    font-size: 14px; /* Kích thước chữ */
+    color: #333; /* Màu chữ */
+    background: #ffffff; /* Nền trắng */
+    outline: none; /* Bỏ viền khi focus */
+}
+
+.quantity-selector input::-webkit-outer-spin-button,
+.quantity-selector input::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* Ẩn nút tăng/giảm mặc định của input number */
+    margin: 0;
+}
+
+.quantity-selector input[type="number"] {
+    -moz-appearance: textfield; /* Tương tự cho Firefox */
+}
+    </style>
 </head>
 
 <body>
@@ -88,31 +162,29 @@
                 <div class="col-lg-6">
                     <div class="product__details__pic">
                         <div class="product__details__pic__left product__thumb nice-scroll">
-                            <?php
-                            ?>
                             <a class="pt_active" href="#product-1">
-                                <img src="<?php echo $row['URL'];?>" alt="">
+                                <img src="<?php echo $row['URL']; ?>" alt="">
                             </a>
                             <a class="pt" href="#product-2">
-                                <img src="img/shop/Product Detail/shop-<?php echo $id;?>/2.jpg" alt="">
+                                <img src="img/shop/Product Detail/shop-<?php echo $id; ?>/2.jpg" alt="">
                             </a>
                             <a class="pt" href="#product-3">
-                                <img src="img/shop/Product Detail/shop-<?php echo $id;?>/3.jpg" alt="">
+                                <img src="img/shop/Product Detail/shop-<?php echo $id; ?>/3.jpg" alt="">
                             </a>
                             <a class="pt" href="#product-4">
-                                <img src="img/shop/Product Detail/shop-<?php echo $id;?>/4.jpg" alt="">
+                                <img src="img/shop/Product Detail/shop-<?php echo $id; ?>/4.jpg" alt="">
                             </a>
                             <a class="pt" href="#product-5">
-                                <img src="img/shop/Product Detail/shop-<?php echo $id;?>/5.jpg" alt="">
+                                <img src="img/shop/Product Detail/shop-<?php echo $id; ?>/5.jpg" alt="">
                             </a>
                         </div>
                         <div class="product__details__slider__content">
                             <div class="product__details__pic__slider owl-carousel">
-                                <img data-hash="product-1" class="product__big__img" src="<?php echo $row['URL'];?>" alt="ảnh sản phẩm">
-                                <img data-hash="product-2" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id;?>/2.jpg" alt="ảnh sản phẩm">
-                                <img data-hash="product-3" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id;?>/3.jpg" alt="ảnh sản phẩm">
-                                <img data-hash="product-4" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id;?>/4.jpg" alt="ảnh sản phẩm">
-                                <img data-hash="product-5" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id;?>/5.jpg" alt="ảnh sản phẩm">
+                                <img data-hash="product-1" class="product__big__img" src="<?php echo $row['URL']; ?>" alt="ảnh sản phẩm">
+                                <img data-hash="product-2" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id; ?>/2.jpg" alt="ảnh sản phẩm">
+                                <img data-hash="product-3" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id; ?>/3.jpg" alt="ảnh sản phẩm">
+                                <img data-hash="product-4" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id; ?>/4.jpg" alt="ảnh sản phẩm">
+                                <img data-hash="product-5" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id; ?>/5.jpg" alt="ảnh sản phẩm">
                             </div>
                         </div>
                     </div>
@@ -120,140 +192,102 @@
                 <div class="col-lg-6">
                     <div class="product__details__text">
                         <h3><?php echo $row['TEN']; ?></h3>
-                        
-                        <div class="product__details__price"><?php echo number_format($row['GIABANKM'],0,"","."); ?> đ <span><?php echo number_format($row['GIABAN'],0,"","."); ?> đ</span></div>
+                        <div class="product__details__price"><?php echo number_format($row['GIABANKM'], 0, "", "."); ?> đ <span><?php echo number_format($row['GIABAN'], 0, "", "."); ?> đ</span></div>
                         <p><?php echo $row['MOTA']; ?></p>
                         <div class="product__details__button">
                             <div class="quantity">
                                 <span>Số lượng:</span>
-                                <div class="pro-qty">
-                                    <input type="text" value="1">
+                                <div class="quantity-selector">
+                                    <button onclick="decreaseQuantity()">-</button>
+                                    <input type="number" id="quantity" value="1" min="1">
+                                    <button onclick="increaseQuantity()">+</button>
                                 </div>
                             </div>
                             <a href="#" onclick="addToCart(<?php echo $row['IDSP']; ?>)">Thêm vào giỏ hàng</a>
                             <script>
-                                function addToCart(productId) {
-                                    let quantity = document.querySelector(".pro-qty input").value || 1; // Get quantity
+                                function increaseQuantity() {
+                                    let quantityInput = document.getElementById('quantity');
+                                    quantityInput.value = parseInt(quantityInput.value) + 1;
+                                }
 
+                                function decreaseQuantity() {
+                                    let quantityInput = document.getElementById('quantity');
+                                    if (parseInt(quantityInput.value) > 1) {
+                                        quantityInput.value = parseInt(quantityInput.value) - 1;
+                                    }
+                                }
+
+                                function addToCart(productId) {
+                                    let quantity = document.getElementById("quantity").value || 1; // Get quantity
                                     fetch('cart_handler.php', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                        body: `id=${productId}&quantity=${quantity}` // Fix the body parameter name
+                                        body: `id=${productId}&quantity=${quantity}`
                                     })
-                                    .then(response => response.text())
-                                    .then(data => alert("Thêm sản phẩm thành công!")) // Notify user
-                                    .catch(error => console.error("Error:", error));
+                                        .then(response => response.text())
+                                        .then(data => alert("Thêm sản phẩm thành công!"))
+                                        .catch(error => console.error("Error:", error));
                                 }
                             </script>
                         </div>
                         <div class="product__details__widget">
                             <ul>
-                                
                                 <li>
                                     <span>Trạng thái:</span>
-                                        <p>Còn hàng</p>
-                                    </li>
+                                    <!-- Giả sử GIABANKM > 0 là còn hàng, nếu có cột SOLUONG thì thay đổi -->
+                                    <p><?php echo ($row['GIABANKM'] > 0) ? 'Còn hàng' : 'Hết hàng'; ?></p>
+                                </li>
                                 <li>
                                     <span>Hãng sản phẩm:</span>
-                                        <p><?php $IDLSP = $row['IDLSP']; $rows = $conn->query("SELECT TENLOAI FROM loaisp WHERE IDLSP = '$IDLSP'")->fetch_assoc(); echo $rows['TENLOAI'];?></p>
-                                    </li>
+                                    <p><?php echo $row['TENLOAI']; ?></p>
+                                </li>
                             </ul>
                         </div>
                     </div>
                 </div>
-
             </div>
-            <div class="row" style="width: 100%;margin-top: 60px;">
+
+            <!-- Related Products Section -->
+            <div class="row" style="width: 100%; margin-top: 60px;">
                 <div class="col-lg-12 text-center">
                     <div class="related__title">
                         <h5>SẢN PHẨM LIÊN QUAN</h5>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="img/shop/shop-4.jpg">
-                            <div class="label new">New</div>
-                            <ul class="product__hover">
-                                <li><a href="img/shop/shop-4.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                <li><a href="dangnhap.html"><span class="icon_bag_alt"></span></a></li>
-                            </ul>
+                <div class="col-lg-12">
+                    <?php if ($result_related->num_rows > 0) { ?>
+                        <div class="related-products owl-carousel">
+                            <?php
+                            while ($related_row = $result_related->fetch_assoc()) {
+                                // Kiểm tra trạng thái tồn kho (giả sử GIABANKM = 0 là hết hàng)
+                                $stock_status = ($related_row['GIABANKM'] > 0) ? '' : 'stockout';
+                                $stock_label = ($related_row['GIABANKM'] > 0) ? '' : '<div class="label stockout">Hết hàng</div>';
+                            ?>
+                                <div class="product__item">
+                                    <div class="product__item__pic set-bg" data-setbg="<?php echo $related_row['URL']; ?>">
+                                        <?php echo $stock_label; ?>
+                                        <ul class="product__hover">
+                                            <li><a href="<?php echo $related_row['URL']; ?>" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                            <li><a href="chitietsanpham.php?id=<?php echo $related_row['IDSP']; ?>"><span class="icon_bag_alt"></span></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="product__item__text">
+                                        <h6><a href="chitietsanpham.php?id=<?php echo $related_row['IDSP']; ?>"><?php echo $related_row['TEN']; ?></a></h6>
+                                        <div class="rating">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>
+                                        <div class="product__price"><?php echo number_format($related_row['GIABANKM'], 0, "", "."); ?> đ <span><?php echo number_format($related_row['GIABAN'], 0, "", "."); ?> đ</span></div>
+                                    </div>
+                                </div>
+                            <?php } ?>
                         </div>
-                        <div class="product__item__text">
-                            <h6><a href="#">Nike Air Max</a></h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">2.999.000 đ <span>3.566.000 đ</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="img/shop/shop-5.jpg">
-                            <ul class="product__hover">
-                                <li><a href="img/shop/shop-5.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                <li><a href="dangnhap.html"><span class="icon_bag_alt"></span></a></li>
-                            </ul>
-                        </div>
-                        <div class="product__item__text">
-                            <h6><a href="#">Adidas Ultraboost</a></h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">2.704.000 đ<span>3.588.000 đ</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="img/shop/shop-6.jpg">
-                            <div class="label stockout">out of stock</div>
-                            <ul class="product__hover">
-                                <li><a href="img/shop/shop-6.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                <li><a href="dangnhap.html"><span class="icon_bag_alt"></span></a></li>
-                            </ul>
-                        </div>
-                        <div class="product__item__text">
-                            <h6><a href="#">Nike Lebron</a></h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">4.500.000 đ <span>5.566.000 đ</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="img/shop/shop-7.jpg">
-                            <ul class="product__hover">
-                                <li><a href="img/shop/shop-7.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                <li><a href="dangnhap.html"><span class="icon_bag_alt"></span></a></li>
-                            </ul>
-                        </div>
-                        <div class="product__item__text">
-                            <h6><a href="#">Nike Cortez</a></h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price"> 3.123.000 đ<span>4.444.000 đ</span></div>
-                        </div>
-                    </div>
+                    <?php } else { ?>
+                        <div class="col-lg-12 text-center"><p>Không có sản phẩm liên quan.</p></div>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -379,7 +413,7 @@
                 <div class="col-lg-12">
                     <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     <div class="footer__copyright__text">
-                        <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
+                        <p>Copyright © <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
                     </div>
                     <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                 </div>
@@ -410,6 +444,31 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/jquery.nicescroll.min.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Initialize Owl Carousel for Related Products -->
+    <script>
+        $(document).ready(function() {
+            $('.related-products').owlCarousel({
+                loop: true,
+                margin: 20,
+                nav: true,
+                dots: true,
+                autoplay: true,
+                autoplayTimeout: 3000,
+                autoplayHoverPause: true,
+                responsive: {
+                    0: { items: 1 },
+                    600: { items: 2 },
+                    1000: { items: 4 }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
+
+<?php
+// Đóng kết nối
+$conn->close();
+?>
