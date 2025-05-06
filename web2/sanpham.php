@@ -158,6 +158,9 @@
                         <div class="col-lg-4 col-md-6">
                             <div class="product__item">
                                 <div class="product__item__pic set-bg" data-setbg="/BTweb/<?php echo $row['URL']; ?>">
+
+
+                                
                                 
                                     <ul class="product__hover">
                                         <li><a href="/BTweb/<?php echo $row['URL']; ?>" class="image-popup"><span class="arrow_expand"></span></a></li>
