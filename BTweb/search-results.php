@@ -52,67 +52,224 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
     <style>
-        .pagination {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 40px;
-            margin-bottom: 60px;
-        }
-        .pagination a {
-            display: inline-block !important;
-            padding: 8px 14px;
-            border: 1px solid #ddd;
-            color: #333;
-            border-radius: 4px;
-            background-color: #fff;
-            transition: background-color 0.3s, color 0.3s;
-            text-decoration: none;
-            font-size: 16px;
-        }
-        .pagination a:hover {
-            background-color: #f1f1f1;
-            color: #000;
-        }
-        .pagination a.active {
-            background-color: #111;
-            color: #fff;
-            border-color: #111;
-        }
-        .back-button {
-            font-size: 1.2em;
-            padding: 10px 20px;
-            border: none;
-            background-color: #119206;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .back-button:hover {
-            background-color: #ff6347;
-        }
-        .product__item__pic {
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border: 1px solid #ddd;
-        }
-        .product__item__pic img {
-            max-width: 100%;
-            height: auto;
-            object-fit: contain;
-            max-height: 200px;
-        }
-        .no-results {
-            font-size: 1.2em;
-            color: #555;
-            text-align: center;
-            margin: 40px 0;
-        }
+       /* Cải thiện bố cục tổng thể */
+.shop.spad {
+    padding: 60px 0;
+    background-color: #f8f9fa;
+}
+
+/* Container sản phẩm */
+.product__item {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.product__item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Hình ảnh sản phẩm */
+.product__item__pic {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+}
+
+.product__item__pic img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.product__item:hover .product__item__pic img {
+    transform: scale(1.05);
+}
+
+/* Thông tin sản phẩm */
+.product__item__text {
+    padding: 20px;
+    text-align: center;
+}
+
+.product__item__text h6 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+.product__item__text h6 a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.product__item__text h6 a:hover {
+    color: #119206;
+}
+
+.product__price {
+    font-size: 1rem;
+    color: #119206;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.product__price span {
+    color: #999;
+    font-size: 0.9rem;
+    text-decoration: line-through;
+    margin-left: 10px;
+}
+
+/* Nút hành động */
+.product__actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.product__actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.edit-product {
+    background-color: #119206;
+    color: #fff;
+}
+
+.edit-product:hover {
+    background-color: #0e7a05;
+    transform: translateY(-2px);
+}
+
+.delete-product {
+    background-color: #ff6347;
+    color: #fff;
+}
+
+.delete-product:hover {
+    background-color: #e5533d;
+    transform: translateY(-2px);
+}
+
+/* Nút quay lại */
+.back-button {
+    display: inline-block;
+    padding: 12px 24px;
+    border: none;
+    background-color: #119206;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-button:hover {
+    background-color: #0e7a05;
+    transform: translateY(-2px);
+}
+
+/* Phân trang */
+.pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 40px 0;
+}
+
+.pagination a {
+    padding: 10px 16px;
+    border: 1px solid #ddd;
+    color: #333;
+    border-radius: 8px;
+    background-color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #119206;
+    color: #fff;
+    border-color: #119206;
+}
+
+.pagination a.active {
+    background-color: #119206;
+    color: #fff;
+    border-color: #119206;
+    font-weight: 600;
+}
+
+/* Thông báo không có kết quả */
+.no-results {
+    font-size: 1.2rem;
+    color: #555;
+    text-align: center;
+    padding: 40px 0;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .product__item {
+        margin-bottom: 20px;
+    }
+
+    .product__item__pic {
+        height: 180px;
+    }
+
+    .product__item__text {
+        padding: 15px;
+    }
+
+    .back-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    .pagination a {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .product__item__pic {
+        height: 150px;
+    }
+
+    .product__actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .product__actions button {
+        width: 100%;
+    }
+}
     </style>
 </head>
 <body>
