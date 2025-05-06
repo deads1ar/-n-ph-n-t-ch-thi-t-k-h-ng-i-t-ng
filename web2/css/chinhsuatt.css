@@ -34,7 +34,7 @@ label {
     color: #333;
 }
 
-input, textarea, button {
+input, textarea, div.container button{
     width: 100%;
     padding: 10px;
     margin: 5px 0;
@@ -47,7 +47,11 @@ textarea {
     resize: none;
 }
 
-button {
+button.quaylai{
+    all: unset;
+}
+
+body div.container button{
     background-color: #d32f2f;
     color: white;
     border: none;
@@ -56,11 +60,11 @@ button {
     font-weight: bold;
 }
 
-button:hover {
+body div.container button:hover {
     background-color: #b71c1c;
 }
 
-button:active {
+body div.container button:active {
     background-color: #880e4f;
 }
 #address{

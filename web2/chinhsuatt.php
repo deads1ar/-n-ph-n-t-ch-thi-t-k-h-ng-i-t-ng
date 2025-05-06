@@ -51,6 +51,11 @@ $conn->close();
     <title>Chỉnh sửa thông tin</title>
     <link rel="stylesheet" href="css/chinhsuatt.css">
 </head>
+<div style="position: absolute; top: 10px;left: 10px;background-color: none;">
+    <button class="quaylai" onclick="history.back()" title="Quay lại">
+        <img src="\web2\img\return.svg"></img>
+    </button>
+</div>
 <body>
     <div class="container">
         <h2>Chỉnh sửa thông tin cá nhân</h2>
@@ -81,8 +86,7 @@ $conn->close();
                 <textarea id="address" name="address" rows="3" ><?php echo $userData['DC']; ?></textarea>
             </div>
 
-         
-            <button type="submit"  >Lưu thông tin</button>
+            <button type="submit">Lưu thông tin</button>
         </form>
     </div>
 </body>

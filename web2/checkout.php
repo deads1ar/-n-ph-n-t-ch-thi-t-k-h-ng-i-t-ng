@@ -117,7 +117,7 @@ $row0 = $result0->fetch_assoc();
             <tbody>
                 <tr>
                     <td>
-                        <div class="product__item__pic1 set-bg" data-setbg="<?php echo $row['URL']; ?>"></div>
+                        <div class="product__item__pic1 set-bg" data-setbg="/BTweb/<?php echo $row['URL']; ?>"></div>
                     </td>
                     <td><?php echo $row['TEN']; ?></td>
                     <td><?php echo number_format($row['GIABANKM'],0,"",".") ."đ"; ?></td>
@@ -250,7 +250,7 @@ function updateCookieQuantity(productId, quantity) {
                                             $usercart = json_decode($_COOKIE[$userCartCookie],true);
                                         
                                         foreach ($usercart as $product => $quantity) {
-                                            $sql = "SELECT * FROM sp WHERE IDSP = '$productid'";
+                                            $sql = "SELECT * FROM sp WHERE IDSP = '$product'";
                                             $result = $conn->query($sql);
                                             $row = $result->fetch_assoc();
                                             echo "<li>" . $count . ". " . $row['TEN'] . "<span>" . number_format($row['GIABANKM'],0,"",".") . "đ" . "</span></li>";

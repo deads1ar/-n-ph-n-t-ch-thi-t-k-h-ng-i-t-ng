@@ -173,9 +173,9 @@ if (!isset($_GET['page'])) {
         while ($row = $result->fetch_assoc()) { ?>
             <div class="col-lg-4 col-md-6">
             <div class="product__item">
-            <div class="product__item__pic set-bg" data-setbg="<?php echo $row['URL']; ?>">
+            <div class="product__item__pic set-bg" data-setbg="/BTweb/<?php echo $row['URL']; ?>">
             <ul class="product__hover">
-            <li><a href="<?php echo $row['URL']; ?>" class="image-popup"><span class="arrow_expand"></span></a></li>
+            <li><a href="/BTweb/<?php echo $row['URL']; ?>" class="image-popup"><span class="arrow_expand"></span></a></li>
             <li><a href="#" onclick="addToCart(<?php echo $row['IDSP']; ?>,1)"><span class="icon_bag_alt"></span></a></li>
                                         <script>
                                         function addToCart(productId, quantity) {
