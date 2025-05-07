@@ -5,44 +5,37 @@ if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
 // Get search parameters
-$keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
-$brands = isset($_GET['brand']) ?  $_GET['brand'] : [];
+$keyword = isset($_GET['keyword']) ? $conn->real_escape_string(trim($_GET['keyword'])) : '';
+$brands = isset($_GET['brand']) && is_array($_GET['brand']) ? array_map([$conn, 'real_escape_string'], $_GET['brand']) : [];
 $min_price = isset($_GET['min_price']) ? (int)$_GET['min_price'] : 1;
 $max_price = isset($_GET['max_price']) ? (int)$_GET['max_price'] : 9000000;
 $current_page = basename($_SERVER['SCRIPT_NAME']);
 if (!isset($_GET['page'])) {
-    // Convert the $brands array into a query-friendly string (comma-separated)
-    $brands_query = !empty($brands) ? '&brand[]=' . implode('&brand[]=', $brands) : '';
-
+    // Convert the $brands array into a query-friendly string
+    $brands_query = !empty($brands) ? '&brand[]=' . implode('&brand[]=', array_map('urlencode', $brands)) : '';
     // Redirect with all parameters properly formatted
     header('Location: ' . $_SERVER['PHP_SELF'] . '?page=1'
         . (!empty($keyword) ? '&keyword=' . urlencode($keyword) : '')
         . $brands_query
-        . (!empty($max_price) ? '&max_price=' . $max_price : '1')
-        . (!empty($min_price) ? '&min_price=' . $min_price : '5000000'));
-    exit(); // Stop further execution after redirect
+        . '&min_price=' . $min_price
+        . '&max_price=' . $max_price);
+    exit();
+} else {
+    $page = intval($_GET['page']);
 }
-
-    else {
-        $page = intval($_GET['page']);
-    }
 ?>
 <!DOCTYPE html>
 <html lang="zxx">
-
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="Ashion Template">
     <meta name="keywords" content="Ashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ashion with Fashion</title>
-
+    <title>Kết Quả Tìm Kiếm | Ashion</title>
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Css Styles -->
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
@@ -52,14 +45,23 @@ if (!isset($_GET['page'])) {
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+    <style>
+        .product__item__pic .owl-carousel .owl-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: contain;
+        }
+        .product__item__pic {
+            height: 300px;
+            overflow: hidden;
+        }
+    </style>
 </head>
-
 <body>
     <!-- Page Preloder -->
     <div id="preloder">
         <div class="loader"></div>
     </div>
-
     <!-- Offcanvas Menu Begin -->
     <div class="offcanvas-menu-overlay"></div>
     <div class="offcanvas-menu-wrapper">
@@ -77,11 +79,9 @@ if (!isset($_GET['page'])) {
         </div>
     </div>
     <!-- Offcanvas Menu End -->
-
     <!-- Header Section Begin -->
-    <?php include 'header.php' ?>
+    <?php include 'header.php'; ?>
     <!-- Header Section End -->
-
     <!-- Breadcrumb Begin -->
     <div class="breadcrumb-option">
         <div class="container">
@@ -89,43 +89,42 @@ if (!isset($_GET['page'])) {
                 <div class="col-lg-12">
                     <div class="breadcrumb__links">
                         <a href="/index.php"><i class="fa fa-home"></i> Trang chủ</a>
-                        <span>Sản phẩm</span>
+                        <span>Kết Quả Tìm Kiếm</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Breadcrumb End -->
-
     <!-- Shop Section Begin -->
     <section class="shop spad">
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-3">
                     <div class="shop__sidebar">
-                    <div class="sidebar__sizes">
-                    <div class="section-title">
-                    <h4>TÌM KIẾM SẢN PHẨM</h4>
-                    </div>
-                         <form action="ketquatimkiem.php?" method="GET">
-                         <input type="text" name="keyword" class="search-input" placeholder="Nhập tên sản phẩm" value="<?php echo isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : ''; ?>" style="margin-bottom: 20px;">
-                    <div class="section-title">
-                     <h4>TÌM THEO THƯƠNG HIỆU</h4>
-                    </div>
+                        <div class="sidebar__sizes">
+                            <div class="section-title">
+                                <h4>TÌM KIẾM SẢN PHẨM</h4>
+                            </div>
+                            <form action="ketquatimkiem.php" method="GET">
+                                <input type="text" name="keyword" class="search-input" placeholder="Nhập tên sản phẩm" value="<?php echo htmlspecialchars($keyword); ?>" style="margin-bottom: 20px;">
+                                <div class="section-title">
+                                    <h4>TÌM THEO THƯƠNG HIỆU</h4>
+                                </div>
                                 <div class="size__list">
                                     <label for="nike">
                                         Nike
-                                        <input type="checkbox" id="nike" name="brand[]" value="Nike" <?php echo (isset($_GET['brand']) && in_array('Nike', $_GET['brand'])) ? 'checked' : ''; ?>>
+                                        <input type="checkbox" id="nike" name="brand[]" value="Nike" <?php echo in_array('Nike', $brands) ? 'checked' : ''; ?>>
                                         <span class="checkmark"></span>
                                     </label>
                                     <label for="adidas">
                                         Adidas
-                                        <input type="checkbox" id="adidas" name="brand[]" value="Adidas" <?php echo (isset($_GET['brand']) && in_array('Adidas', $_GET['brand'])) ? 'checked' : ''; ?>>
+                                        <input type="checkbox" id="adidas" name="brand[]" value="Adidas" <?php echo in_array('Adidas', $brands) ? 'checked' : ''; ?>>
                                         <span class="checkmark"></span>
                                     </label>
-                                    <label for="jordan">
+                                    <label for="newbalance">
                                         New Balance
-                                        <input type="checkbox" id="jordan" name="brand[]" value="New Balance" <?php echo (isset($_GET['brand']) && in_array('New Balance', $_GET['brand'])) ? 'checked' : ''; ?>>
+                                        <input type="checkbox" id="newbalance" name="brand[]" value="New Balance" <?php echo in_array('New Balance', $brands) ? 'checked' : ''; ?>>
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
@@ -138,8 +137,8 @@ if (!isset($_GET['page'])) {
                                         <div class="range-slider">
                                             <div class="price-input">
                                                 <p>Giá:</p>
-                                                <input style="text-align: center;" type="text" id="minamount" name="min_price" value="<?php echo isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : '1'; ?>" readonly>
-                                                <input style="text-align: center;" type="text" id="maxamount" name="max_price" value="<?php echo isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : '9000000'; ?>" readonly>
+                                                <input style="text-align: center;" type="text" id="minamount" name="min_price" value="<?php echo htmlspecialchars($min_price); ?>" readonly>
+                                                <input style="text-align: center;" type="text" id="maxamount" name="max_price" value="<?php echo htmlspecialchars($max_price); ?>" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -149,95 +148,116 @@ if (!isset($_GET['page'])) {
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-9 col-md-9">                   
-                    <?php include 'display_header.php'
-                // include display header NIKE-ADIDAS-JORDAN-KETQUATIMKIEM 
-                ?> 
-                <div class="row">                
-    <?php
-    // Build SQL query
-    $limit = 9;
-    $offset = ($page - 1) * $limit;
-    $sql = "SELECT * FROM sp WHERE 1=1";
-    if (!empty($keyword)) {
-        $sql .= " AND TEN LIKE '%" . $conn->real_escape_string($keyword) . "%'";
-    }
-    if (!empty($brands) && is_array($brands)) {
-        $brands_str = "'" . implode("','", array_map([$conn, 'real_escape_string'], $brands)) . "'";
-        $sql .= " AND IDLSP IN (SELECT IDLSP FROM loaisp WHERE TENLOAI IN ($brands_str))";
-    }
-    $sql .= " AND GIABANKM BETWEEN $min_price AND $max_price";
-    $sql .= " LIMIT $limit OFFSET $offset";
-    $result = $conn->query($sql);
-    if ($result->num_rows >= 1) {
-        while ($row = $result->fetch_assoc()) { ?>
-            <div class="col-lg-4 col-md-6">
-            <div class="product__item">
-            <div class="product__item__pic set-bg" data-setbg="/BTweb/<?php echo $row['URL']; ?>">
-            <ul class="product__hover">
-            <li><a href="/BTweb/<?php echo $row['URL']; ?>" class="image-popup"><span class="arrow_expand"></span></a></li>
-            <li><a href="#" onclick="addToCart(<?php echo $row['IDSP']; ?>,1)"><span class="icon_bag_alt"></span></a></li>
-                                        <script>
-                                        function addToCart(productId, quantity) {
-                                            fetch('cart_handler.php', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                                body: `id=${productId}&quantity=${quantity}`
-                                            })
-                                            .then(response => response.text())
-                                            .then(data => {
-                                                if (data === "NOT_LOGGED_IN") {
-                                                    alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
-                                                    window.location.href = '/web2/dangnhap.html'; // Redirect to login page
-                                                } else if (data === "SUCCESS") {
-                                                    alert("Thêm sản phẩm thành công!");
-                                                } else {
-                                                    alert("Có lỗi xảy ra!");
-                                                }
-                                            })
-                                            .catch(error => console.error("Error:", error));
-                                        }
-                                        </script>
-            </ul>
-            </div>
-            <div class="product__item__text">
-            <h6><a href="chitietsanpham.php?id=<?php echo $row['IDSP'] ?>"><?php echo $row['TEN'] ?></a></h6>
-            <br> 
-            <div class="product__price"><?php echo number_format($row['GIABANKM'],0,'','.') ?>đ <span><?php echo number_format($row['GIABAN'],0,'','.') ?>đ</span></div>
-            </div>
-            </div>
-            </div>
-    <?php } 
-    } 
-    else {
-        echo  '<div class="col-lg-12 text-center">Không tìm thấy sản phẩm nào.</div>';
-    }
-    ?>
-                                <?php
-                                /* PHP FOR PAGE NAVIGATION */
-                                    // Pagination variables
-$limit = 9;
-$offset = ($page - 1) * $limit;
-// Query to count total products
-$sql_count = "SELECT COUNT(*) AS total FROM sp WHERE 1=1";
-if (!empty($keyword)) {
-    $sql_count .= " AND TEN LIKE '%" . $conn->real_escape_string($keyword) . "%'";
-}
-if (!empty($brands) && is_array($brands)) {
-    $brands_str = "'" . implode("','", array_map([$conn, 'real_escape_string'], $brands)) . "'";
-    $sql_count .= " AND IDLSP IN (SELECT IDLSP FROM loaisp WHERE TENLOAI IN ($brands_str))";
-}
-$sql_count .= " AND REPLACE(GIABANKM, '.', '') BETWEEN $min_price AND $max_price";
-
-$result_count = $conn->query($sql_count);
-$totalproduct = ($result_count->num_rows > 0) ? $result_count->fetch_assoc()['total'] : 0;
-
-// Calculate total pages
-$totalpage = ceil($totalproduct / $limit);
+                <div class="col-lg-9 col-md-9">
+                    <?php include 'display_header.php'; ?>
+                    <div class="row">
+                        <?php
+                        // Build SQL query
+                        $limit = 9;
+                        $offset = ($page - 1) * $limit;
+                        $sql = "SELECT sp.*, loaisp.TENLOAI 
+                                FROM sp 
+                                JOIN loaisp ON sp.IDLSP = loaisp.IDLSP 
+                                WHERE sp.STATUS = 'active'";
+                        if (!empty($keyword)) {
+                            $sql .= " AND sp.TEN LIKE '%$keyword%'";
+                        }
+                        if (!empty($brands)) {
+                            $brands_str = "'" . implode("','", $brands) . "'";
+                            $sql .= " AND loaisp.TENLOAI IN ($brands_str)";
+                        }
+                        $sql .= " AND sp.GIABANKM BETWEEN $min_price AND $max_price";
+                        $sql .= " LIMIT $limit OFFSET $offset";
+                        $result = $conn->query($sql);
+                        if ($result && $result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                // Fetch all images from ctsp for the current product
+                                $idsp = $row['IDSP'];
+                                $sql_images = "SELECT URL FROM ctsp WHERE IDSP = '$idsp'";
+                                $result_images = $conn->query($sql_images);
+                                $images = [];
+                                // Add primary image from sp.URL
+                                $primary_image = $row['URL'];
+                                if (!empty($primary_image)) {
+                                    $images[] = $primary_image;
+                                }
+                                // Add additional images from ctsp
+                                while ($img_row = $result_images->fetch_assoc()) {
+                                    $images[] = $img_row['URL'];
+                                }
                                 ?>
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="product__item">
+                                        <div class="product__item__pic">
+                                            <div class="product__carousel owl-carousel">
+                                                <?php foreach ($images as $image) { ?>
+                                                    <?php
+                                                    // Check if it's a network URL or local path
+                                                    $image_url = (preg_match('/^https?:\/\//', $image)) ? htmlspecialchars($image) : '/BTweb/' . htmlspecialchars($image);
+                                                    ?>
+                                                    <img src="<?php echo $image_url; ?>" alt="<?php echo htmlspecialchars($row['TEN']); ?>">
+                                                <?php } ?>
+                                            </div>
+                                            <ul class="product__hover">
+                                                <li><a href="<?php echo (preg_match('/^https?:\/\//', $row['URL'])) ? htmlspecialchars($row['URL']) : '/BTweb/' . htmlspecialchars($row['URL']); ?>" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                                <li><a href="#" onclick="addToCart(<?php echo $row['IDSP']; ?>,1)"><span class="icon_bag_alt"></span></a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="product__item__text">
+                                            <h6><a href="chitietsanpham.php?id=<?php echo $row['IDSP']; ?>"><?php echo htmlspecialchars($row['TEN']); ?></a></h6>
+                                            <br>
+                                            <div class="product__price"><?php echo number_format($row['GIABANKM'], 0, '', '.'); ?>đ <span><?php echo number_format($row['GIABAN'], 0, '', '.'); ?>đ</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    function addToCart(productId, quantity) {
+                                        fetch('cart_handler.php', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                            body: `id=${productId}&quantity=${quantity}`
+                                        })
+                                        .then(response => response.text())
+                                        .then(data => {
+                                            if (data === "NOT_LOGGED_IN") {
+                                                alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
+                                                window.location.href = '/web2/dangnhap.html';
+                                            } else if (data === "SUCCESS") {
+                                                alert("Thêm sản phẩm thành công!");
+                                            } else {
+                                                alert("Có lỗi xảy ra!");
+                                            }
+                                        })
+                                        .catch(error => console.error("Error:", error));
+                                    }
+                                </script>
+                            <?php
+                            }
+                        } else {
+                            echo '<div style="margin-bottom:45px;margin-top:45px" class="col-lg-12 text-center">Không tìm thấy sản phẩm nào.</div>';
+                        }
+                        ?>
+                        <?php
+                        // Pagination variables
+                        $sql_count = "SELECT COUNT(*) AS total 
+                                      FROM sp 
+                                      JOIN loaisp ON sp.IDLSP = loaisp.IDLSP 
+                                      WHERE sp.STATUS = 'active'";
+                        if (!empty($keyword)) {
+                            $sql_count .= " AND sp.TEN LIKE '%$keyword%'";
+                        }
+                        if (!empty($brands)) {
+                            $brands_str = "'" . implode("','", $brands) . "'";
+                            $sql_count .= " AND loaisp.TENLOAI IN ($brands_str)";
+                        }
+                        $sql_count .= " AND sp.GIABANKM BETWEEN $min_price AND $max_price";
+                        $result_count = $conn->query($sql_count);
+                        $totalproduct = ($result_count && $result_count->num_rows > 0) ? $result_count->fetch_assoc()['total'] : 0;
+                        $totalpage = ceil($totalproduct / $limit);
+                        ?>
                         <div class="col-lg-12 text-center">
                             <div class="pagination__option">
-                            <?php  include 'page_navigation.php' ?>
+                                <?php include 'page_navigation.php'; ?>
                             </div>
                         </div>
                     </div>
@@ -246,7 +266,6 @@ $totalpage = ceil($totalproduct / $limit);
         </div>
     </section>
     <!-- Shop Section End -->
-
     <!-- Instagram Begin -->
     <div class="instagram">
         <div class="container-fluid">
@@ -271,8 +290,7 @@ $totalpage = ceil($totalproduct / $limit);
                     <div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
                         <div class="instagram__text">
                             <i class="fa fa-instagram"></i>
-                            <a href="#">
-                            </a>
+                            <a href="#"></a>
                         </div>
                     </div>
                 </div>
@@ -280,8 +298,7 @@ $totalpage = ceil($totalproduct / $limit);
                     <div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
                         <div class="instagram__text">
                             <i class="fa fa-instagram"></i>
-                            <a href="https://www.instagram.com/_hbaohuyy/">@_hbaohuyy ig
-                            </a>
+                            <a href="https://www.instagram.com/_hbaohuyy/">@_hbaohuyy ig</a>
                         </div>
                     </div>
                 </div>
@@ -305,7 +322,6 @@ $totalpage = ceil($totalproduct / $limit);
         </div>
     </div>
     <!-- Instagram End -->
-
     <!-- Footer Section Begin -->
     <footer class="footer">
         <div class="container">
@@ -366,17 +382,14 @@ $totalpage = ceil($totalproduct / $limit);
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     <div class="footer__copyright__text">
                         <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
                     </div>
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                 </div>
             </div>
         </div>
     </footer>
     <!-- Footer Section End -->
-
     <!-- Search Begin -->
     <div class="search-model">
         <div class="h-100 d-flex align-items-center justify-content-center">
@@ -387,7 +400,6 @@ $totalpage = ceil($totalproduct / $limit);
         </div>
     </div>
     <!-- Search End -->
-
     <!-- Js Plugins -->
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -401,34 +413,47 @@ $totalpage = ceil($totalproduct / $limit);
     <script src="js/main.js"></script>
     <script>
     $(document).ready(function() {
-        // Hàm định dạng số với dấu phẩy và ký hiệu "đ"
+        // Format number
         function formatNumber(number) {
             return number + " đ";
         }
-
-        // Lấy giá trị min_price và max_price từ PHP
-        var minPrice = <?php echo isset($_GET['min_price']) ? (int)$_GET['min_price'] : 1; ?>;
-        var maxPrice = <?php echo isset($_GET['max_price']) ? (int)$_GET['max_price'] : 9000000; ?>;
-
-        // Đảm bảo giá trị nằm trong khoảng hợp lệ
+        // Get min_price and max_price
+        var minPrice = <?php echo $min_price; ?>;
+        var maxPrice = <?php echo $max_price; ?>;
         minPrice = Math.max(1, Math.min(minPrice, 9000000));
         maxPrice = Math.max(minPrice, Math.min(maxPrice, 9000000));
-
-        // Định dạng giá trị ban đầu cho input
         $("#minamount").val(formatNumber(minPrice));
         $("#maxamount").val(formatNumber(maxPrice));
-        // Khởi tạo thanh trượt với giá trị từ form
+        // Initialize price slider
         $(".price-range").slider({
             range: true,
-            min: 1, // Giá trị tối thiểu của thanh trượt
-            max: 9000000, // Giá trị tối đa của thanh trượt
-            values: [minPrice, maxPrice], // Giá trị hiện tại từ form
+            min: 1,
+            max: 9000000,
+            values: [minPrice, maxPrice],
             slide: function(event, ui) {
                 $("#minamount").val(formatNumber(ui.values[0]));
                 $("#maxamount").val(formatNumber(ui.values[1]));
             }
         });
+        // Initialize Owl Carousel for each product
+        $('.product__carousel').each(function() {
+            $(this).owlCarousel({
+                items: 1,
+                loop: true,
+                nav: true,
+                dots: true,
+                autoplay: false,
+                navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>']
+            });
+        });
+        // Initialize Magnific Popup for image zoom
+        $('.image-popup').magnificPopup({
+            type: 'image',
+            gallery: {
+                enabled: true
+            }
+        });
     });
-</script>
+    </script>
 </body>
 </html>
