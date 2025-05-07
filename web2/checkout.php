@@ -117,7 +117,7 @@ $row0 = $result0->fetch_assoc();
             <tbody>
                 <tr>
                     <td>
-                        <div class="product__item__pic1 set-bg" data-setbg="/BTweb/<?php echo $row['URL']; ?>"></div>
+                        <div class="product__item__pic1 set-bg" data-setbg="<?php echo $row['URL']; ?>"></div>
                     </td>
                     <td><?php echo $row['TEN']; ?></td>
                     <td><?php echo number_format($row['GIABANKM'],0,"",".") ."đ"; ?></td>
