@@ -1,6 +1,6 @@
 <?php
 // Connect to database
-$conn = new mysqli("localhost", "root", "", "web_db");
+$conn = new mysqli("localhost", "root", "", "qlch");
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
@@ -9,23 +9,15 @@ if (isset($_GET['id'])) {
 }
 
 // Truy vấn thông tin sản phẩm hiện tại
-$sql = "SELECT sp.*, loaisp.TENLOAI 
-        FROM sp 
-        JOIN loaisp ON sp.IDLSP = loaisp.IDLSP 
-        WHERE sp.IDSP = ?";
+$sql = "SELECT * FROM AO WHERE IDAO = ?";
+
+
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 
-// Truy vấn sản phẩm liên quan (cùng IDLSP, loại trừ sản phẩm hiện tại, giới hạn 4 sản phẩm)
-$idlsp = $row['IDLSP'];
-$sql_related = "SELECT * FROM sp WHERE IDLSP = ? AND IDSP != ? LIMIT 4";
-$stmt_related = $conn->prepare($sql_related);
-$stmt_related->bind_param("ii", $idlsp, $id);
-$stmt_related->execute();
-$result_related = $stmt_related->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -154,6 +146,32 @@ $result_related = $stmt_related->get_result();
         </div>
     </div>
     <!-- Breadcrumb End -->
+<?php
+$tenSanPham = strtolower($row['TEN']);
+$tenFile = 'default.jpg';
+
+if (strpos($tenSanPham, 'polo') !== false) {
+    $tenFile = 'aothun1.jpg';
+} elseif (strpos($tenSanPham, 'caro') !== false) {
+    $tenFile = 'aosomicaro1.jpg';
+} elseif (strpos($tenSanPham, 'jean') !== false) {
+    $tenFile = 'aokhoacjean1.jpg';
+} elseif (strpos($tenSanPham, 'sơ mi') !== false) {
+    $tenFile = 'aosomi1.jpg';
+} elseif (strpos($tenSanPham, 'khoác') !== false) {
+    $tenFile = 'aokhoac1.jpg';
+} elseif (strpos($tenSanPham, 'hoodie') !== false) {
+    $tenFile = 'aohoodie1.jpg';
+} elseif (strpos($tenSanPham, 'len') !== false) {
+    $tenFile = 'aolen1.jpg';
+} elseif (strpos($tenSanPham, 'phông') !== false) {
+    $tenFile = 'aophong1.jpg';
+} elseif (strpos($tenSanPham, 'cổ trụ') !== false) {
+    $tenFile = 'aocotru1.jpg';
+} elseif (strpos($tenSanPham, 'thể thao') !== false) {
+    $tenFile = 'aothethao1.jpg';
+}
+?>
 
     <!-- Product Details Section Begin -->
     <section class="chitietsanpham spad">
@@ -163,7 +181,9 @@ $result_related = $stmt_related->get_result();
                     <div class="product__details__pic">
                         <div class="product__details__pic__left product__thumb nice-scroll">
                             <a class="pt_active" href="#product-1">
-                                <img src="<?php echo $row['URL']; ?>" alt="">
+                             <?php echo '<img src="img/sanpham/' . $tenFile . '" alt="ảnh sản phẩm">'; ?>
+
+
                             </a>
                             <a class="pt" href="#product-2">
                                 <img src="img/shop/Product Detail/shop-<?php echo $id; ?>/2.jpg" alt="">
@@ -174,13 +194,16 @@ $result_related = $stmt_related->get_result();
                             <a class="pt" href="#product-4">
                                 <img src="img/shop/Product Detail/shop-<?php echo $id; ?>/4.jpg" alt="">
                             </a>
-                            <a class="pt" href="#product-5">
-                                <img src="img/shop/Product Detail/shop-<?php echo $id; ?>/5.jpg" alt="">
-                            </a>
+                          
                         </div>
                         <div class="product__details__slider__content">
                             <div class="product__details__pic__slider owl-carousel">
-                                <img data-hash="product-1" class="product__big__img" src="<?php echo $row['URL']; ?>" alt="ảnh sản phẩm">
+                                <?php 
+$imgPath = 'img/sanpham/' . $tenFile;
+
+?>
+<img data-hash="product-1" class="product__big__img" src="<?php echo htmlspecialchars($imgPath); ?>" alt="ảnh sản phẩm">
+
                                 <img data-hash="product-2" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id; ?>/2.jpg" alt="ảnh sản phẩm">
                                 <img data-hash="product-3" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id; ?>/3.jpg" alt="ảnh sản phẩm">
                                 <img data-hash="product-4" class="product__big__img" src="img/shop/Product Detail/shop-<?php echo $id; ?>/4.jpg" alt="ảnh sản phẩm">
@@ -192,7 +215,8 @@ $result_related = $stmt_related->get_result();
                 <div class="col-lg-6">
                     <div class="product__details__text">
                         <h3><?php echo $row['TEN']; ?></h3>
-                        <div class="product__details__price"><?php echo number_format($row['GIABANKM'], 0, "", "."); ?> đ <span><?php echo number_format($row['GIABAN'], 0, "", "."); ?> đ</span></div>
+                      <div class="product__details__price"><?php echo number_format($row['GIA'], 0, "", "."); ?> đ</div>
+
                         <p><?php echo $row['MOTA']; ?></p>
                         <div class="product__details__button">
                             <div class="quantity">
@@ -203,7 +227,7 @@ $result_related = $stmt_related->get_result();
                                     <button onclick="increaseQuantity()">+</button>
                                 </div>
                             </div>
-                            <a href="#" onclick="addToCart(<?php echo $row['IDSP']; ?>)">Thêm vào giỏ hàng</a>
+                            <a href="#" onclick="addToCart(<?php echo $row['IDAO']; ?>)">Thêm vào giỏ hàng</a>
                             <script>
                                 function increaseQuantity() {
                                     let quantityInput = document.getElementById('quantity');
@@ -234,18 +258,51 @@ $result_related = $stmt_related->get_result();
                             <ul>
                                 <li>
                                     <span>Trạng thái:</span>
-                                    <!-- Giả sử GIABANKM > 0 là còn hàng, nếu có cột SOLUONG thì thay đổi -->
-                                    <p><?php echo ($row['GIABANKM'] > 0) ? 'Còn hàng' : 'Hết hàng'; ?></p>
+                                    <!-- Giả sử GIA > 0 là còn hàng, nếu có cột SOLUONG thì thay đổi -->
+                                   <p><?php echo ($row['TRANGTHAI'] == 1) ? 'Còn hàng' : 'Hết hàng'; ?></p>
+
                                 </li>
                                 <li>
-                                    <span>Hãng sản phẩm:</span>
-                                    <p><?php echo $row['TENLOAI']; ?></p>
+                                    <label for="size">Chọn size:</label>
+<select name="IDSIZE" id="size" required>
+  <option value="S">S</option>
+  <option value="M">M</option>
+  <option value="L">L</option>
+  <option value="XL">XL</option>
+</select>
+
+
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
+<?php
+// ===== LẤY SẢN PHẨM LIÊN QUAN =====
+
+// Lấy ID sản phẩm hiện tại từ URL
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Truy vấn loại áo của sản phẩm hiện tại
+$sql_loai = "SELECT ao.IDLOAI, loaiao.TENLOAI 
+             FROM ao 
+             JOIN loaiao ON ao.IDLOAI = loaiao.IDLOAI 
+             WHERE ao.IDAO = $id";
+$result_loai = $conn->query($sql_loai);
+
+$idloai = 0;
+$tenloai = '';
+if ($result_loai && $result_loai->num_rows > 0) {
+    $row_loai = $result_loai->fetch_assoc();
+    $idloai = $row_loai['IDLOAI'];
+    $tenloai = $row_loai['TENLOAI'];
+}
+
+// Truy vấn sản phẩm liên quan (cùng loại, khác ID hiện tại)
+$sql_related = "SELECT * FROM ao WHERE IDLOAI = $idloai AND IDAO != $id LIMIT 8";
+$result_related = $conn->query($sql_related);
+?>
 
             <!-- Related Products Section -->
             <div class="row" style="width: 100%; margin-top: 60px;">
@@ -260,19 +317,22 @@ $result_related = $stmt_related->get_result();
                             <?php
                             while ($related_row = $result_related->fetch_assoc()) {
                                 // Kiểm tra trạng thái tồn kho (giả sử GIABANKM = 0 là hết hàng)
-                                $stock_status = ($related_row['GIABANKM'] > 0) ? '' : 'stockout';
-                                $stock_label = ($related_row['GIABANKM'] > 0) ? '' : '<div class="label stockout">Hết hàng</div>';
+                              $stock_status = ($related_row['TRANGTHAI'] == 1) ? '' : 'stockout';
+$stock_label = ($related_row['TRANGTHAI'] == 1) ? '' : '<div class="label stockout">Hết hàng</div>';
+
                             ?>
                                 <div class="product__item">
-                                    <div class="product__item__pic set-bg" data-setbg="<?php echo $related_row['URL']; ?>">
+                       <div class="product__item__pic set-bg" data-setbg="<?php echo $related_row['URL']; ?>">
+
+
                                         <?php echo $stock_label; ?>
                                         <ul class="product__hover">
-                                            <li><a href="<?php echo $related_row['URL']; ?>" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                            <li><a href="chitietsanpham.php?id=<?php echo $related_row['IDSP']; ?>"><span class="icon_bag_alt"></span></a></li>
+                                            <li><a href="img/sanpham/<?php echo $tenFile; ?>" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                            <li><a href="chitietsanpham.php?id=<?php echo $related_row['IDAO']; ?>"><span class="icon_bag_alt"></span></a></li>
                                         </ul>
                                     </div>
                                     <div class="product__item__text">
-                                        <h6><a href="chitietsanpham.php?id=<?php echo $related_row['IDSP']; ?>"><?php echo $related_row['TEN']; ?></a></h6>
+                                        <h6><a href="chitietsanpham.php?id=<?php echo $related_row['IDAO']; ?>"><?php echo $related_row['TEN']; ?></a></h6>
                                         <div class="rating">
                                             <i class="fa fa-star"></i>
                                             <i class="fa fa-star"></i>
@@ -280,7 +340,8 @@ $result_related = $stmt_related->get_result();
                                             <i class="fa fa-star"></i>
                                             <i class="fa fa-star"></i>
                                         </div>
-                                        <div class="product__price"><?php echo number_format($related_row['GIABANKM'], 0, "", "."); ?> đ <span><?php echo number_format($related_row['GIABAN'], 0, "", "."); ?> đ</span></div>
+                                <div class="product__price"><?php echo number_format($related_row['GIA'], 0, "", "."); ?> đ</div>
+
                                     </div>
                                 </div>
                             <?php } ?>
@@ -294,63 +355,62 @@ $result_related = $stmt_related->get_result();
     </section>
     <!-- Product Details Section End -->
 
-    <!-- Instagram Begin -->
-    <div class="instagram">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+<!-- Instagram Begin -->
+<div class="instagram">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/2.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/6.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/9.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/11.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/15.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/7.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
     <!-- Instagram End -->
-
     <!-- Footer Section Begin -->
     <footer class="footer">
         <div class="container">
@@ -360,7 +420,7 @@ $result_related = $stmt_related->get_result();
                         <div class="footer__logo">
                             <a href="./index.html"><img src="img/logo.png" alt=""></a>
                         </div>
-                        <p>Trang web bán giày chuyên cung cấp các mẫu giày thời trang, đa dạng từ thể thao đến công sở. Sản phẩm đảm bảo chất lượng cao, với nhiều lựa chọn về kiểu dáng và kích cỡ phù hợp cho mọi lứa tuổi.</p>
+                        <p>Trang web bán áo chuyên cung cấp các mẫu áo thời trang, đa dạng từ áo thun, áo khoác đến áo sơ mi. Sản phẩm đảm bảo chất lượng cao, với nhiều lựa chọn về kiểu dáng và kích cỡ, phù hợp cho mọi lứa tuổi.</p>
                         <div class="footer__payment">
                             <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
                             <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
@@ -402,7 +462,7 @@ $result_related = $stmt_related->get_result();
                         <div class="footer__social">
                             <a href="#"><i class="fa fa-facebook"></i></a>
                             <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+                            <a href ><i class="fa fa-youtube-play"></i></a>
                             <a href="#"><i class="fa fa-instagram"></i></a>
                             <a href="#"><i class="fa fa-pinterest"></i></a>
                         </div>
@@ -411,11 +471,9 @@ $result_related = $stmt_related->get_result();
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     <div class="footer__copyright__text">
-                        <p>Copyright © <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
+                        <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
                     </div>
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                 </div>
             </div>
         </div>

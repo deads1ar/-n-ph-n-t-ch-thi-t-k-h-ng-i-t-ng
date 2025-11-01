@@ -12,7 +12,7 @@ $session_duration = 1800;
 if (time() - $_SESSION['timeout'] > $session_duration) {
     session_unset(); // Clear session variables
     session_destroy(); // Destroy the session
-    echo "<script>alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!'); window.location.href='/web2/dangnhap.html';</script>";
+    echo "<script>alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!'); window.location.href='dangnhap.html';</script>";
     exit;
 } else {
     $_SESSION['timeout'] = time(); // Reset session timer on activity
@@ -20,7 +20,7 @@ if (time() - $_SESSION['timeout'] > $session_duration) {
 $current_page = basename($_SERVER['SCRIPT_NAME']);
 $product = isset($_GET['product']) ? $_GET['product'] : "";
 ?>
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="./web2/css/style.css" type="text/css">
 <header class="header">
     <div class="container-fluid">
         <div class="row">
@@ -36,13 +36,13 @@ $product = isset($_GET['product']) ? $_GET['product'] : "";
                             <a href="/index.php">Trang chủ</a>
                         </li>
                         <li class="<?= ($product == 'Nike') ? 'active' : '' ?>">
-                            <a href="/web2/sanpham.php?product=Nike">Nike</a>
+                            <a href="/web2/sanpham.php?product=Nike">Áo thun</a>
                         </li>
                         <li class="<?= ($product == 'Adidas') ? 'active' : '' ?>">
-                            <a href="/web2/sanpham.php?product=Adidas">Adidas</a>
+                            <a href="/web2/sanpham.php?product=Adidas">Áo sơ mi</a>
                         </li>
                         <li class="<?= ($product == 'New Balance') ? 'active' : '' ?>">
-                            <a href="/web2/sanpham.php?product=New Balance">New Balance</a>
+                            <a href="/web2/sanpham.php?product=New Balance">Áo khoác</a>
                         </li>
                         <li class="<?= ($current_page == 'checkout.php') ? 'active' : '' ?>">
                             <a href="/web2/checkout.php">Giỏ hàng</a>
@@ -92,7 +92,7 @@ if (isset($_SESSION['IDKH'])) {
     </li> ' ;
 } else {
     // User is not logged in
-    echo'<a href="/web2/dangnhap.html">Đăng Nhập</a>';
+    echo'<a href="dangnhap.html">Đăng Nhập</a>';
 }
 ?>
                         </ul>

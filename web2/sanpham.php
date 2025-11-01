@@ -1,7 +1,7 @@
 <?php
 session_start();
 $current_page = basename($_SERVER['SCRIPT_NAME']);
-$conn = mysqli_connect("localhost", "root", "", "web_db");
+$conn = mysqli_connect("localhost", "root", "", "qlch");
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
@@ -47,9 +47,7 @@ if (!isset($_GET['page'])) {
 </head>
 <body>
     <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
+  
     <!-- Offcanvas Menu Begin -->
     <div class="offcanvas-menu-overlay"></div>
     <div class="offcanvas-menu-wrapper">
@@ -97,21 +95,21 @@ if (!isset($_GET['page'])) {
                             <form action="ketquatimkiem.php" method="GET">
                                 <input type="text" name="keyword" class="search-input" placeholder="Nhập tên sản phẩm" value="<?php echo isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : ''; ?>" style="margin-bottom: 20px;">
                                 <div class="section-title">
-                                    <h4>TÌM THEO THƯƠNG HIỆU</h4>
+                                    <h4>TÌM THEO LOẠI</h4>
                                 </div>
                                 <div class="size__list">
                                     <label for="nike">
-                                        Nike
+                                        Áo thun
                                         <input type="checkbox" id="nike" name="brand[]" value="Nike" <?php echo (isset($_GET['brand']) && in_array('Nike', $_GET['brand'])) ? 'checked' : ''; ?>>
                                         <span class="checkmark"></span>
                                     </label>
                                     <label for="adidas">
-                                        Adidas
+                                        Áo sơ mi
                                         <input type="checkbox" id="adidas" name="brand[]" value="Adidas" <?php echo (isset($_GET['brand']) && in_array('Adidas', $_GET['brand'])) ? 'checked' : ''; ?>>
                                         <span class="checkmark"></span>
                                     </label>
                                     <label for="jordan">
-                                        New Balance
+                                        Áo khoác
                                         <input type="checkbox" id="jordan" name="brand[]" value="New Balance" <?php echo (isset($_GET['brand']) && in_array('New Balance', $_GET['brand'])) ? 'checked' : ''; ?>>
                                         <span class="checkmark"></span>
                                     </label>
@@ -146,87 +144,85 @@ if (!isset($_GET['page'])) {
                         $limit = 6;
                         $offset = ($page - 1) * $limit;
                         $product = isset($_GET['product']) ? mysqli_real_escape_string($conn, $_GET['product']) : '';
-                        $sql = "SELECT sp.*, loaisp.TENLOAI FROM sp JOIN loaisp ON loaisp.IDLSP = sp.IDLSP WHERE sp.STATUS = 'active'";
-                        if ($product !== "") {
-                            $sql .= " AND loaisp.TENLOAI = '$product'";
-                        }
-                        $sql .= " LIMIT $limit OFFSET $offset";
+                    $sql = "SELECT * FROM AO WHERE TRANGTHAI = 1 LIMIT $limit OFFSET $offset";
+$result = $conn->query($sql);
+
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
-                                // Lấy tất cả ảnh từ bảng ctsp cho sản phẩm hiện tại
-                                $idsp = $row['IDSP'];
-                                $sql_images = "SELECT URL FROM ctsp WHERE IDSP = '$idsp'";
-                                $result_images = $conn->query($sql_images);
-                                $images = [];
-                                // Thêm ảnh chính từ sp.URL
-                                $primary_image = $row['URL'];
-                                if (!empty($primary_image)) {
-                                    $images[] = $primary_image;
-                                }
-                                // Thêm các ảnh từ ctsp
-                                while ($img_row = $result_images->fetch_assoc()) {
-                                    $images[] = $img_row['URL'];
-                                }
-                                ?>
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="product__item">
-                                        <div class="product__item__pic">
-                                            <div class="product__carousel owl-carousel">
-                                                <?php foreach ($images as $image) { ?>
-                                                    <?php
-                                                    // Kiểm tra nếu là URL mạng hay đường dẫn cục bộ
-                                                    $image_url = (preg_match('/^https?:\/\//', $image)) ? htmlspecialchars($image) : '/BTweb/' . htmlspecialchars($image);
-                                                    ?>
-                                                    <img src="<?php echo $image_url; ?>" alt="<?php echo htmlspecialchars($row['TEN']); ?>">
-                                                <?php } ?>
-                                            </div>
-                                            <ul class="product__hover">
-                                                <li><a href="<?php echo (preg_match('/^https?:\/\//', $row['URL'])) ? htmlspecialchars($row['URL']) : '/BTweb/' . htmlspecialchars($row['URL']); ?>" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                                <li><a href="#" onclick="addToCart(<?php echo $row['IDSP']; ?>,1)"><span class="icon_bag_alt"></span></a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="product__item__text">
-                                            <h6><a href="./chitietsanpham.php?id=<?php echo $row['IDSP']; ?>"><?php echo htmlspecialchars($row['TEN']); ?></a></h6>
-                                            <br>
-                                            <div class="product__price"><?php echo number_format($row['GIABANKM'], 0, '', '.'); ?>đ <span><?php echo number_format($row['GIABAN'], 0, '', '.'); ?>đ</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <script>
-                                    function addToCart(productId, quantity) {
-                                        fetch('cart_handler.php', {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                            body: `id=${productId}&quantity=${quantity}`
-                                        })
-                                        .then(response => response.text())
-                                        .then(data => {
-                                            if (data === "NOT_LOGGED_IN") {
-                                                alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
-                                                window.location.href = '/web2/dangnhap.html';
-                                            } else if (data === "SUCCESS") {
-                                                alert("Thêm sản phẩm thành công!");
-                                            } else {
-                                                alert("Có lỗi xảy ra!");
-                                            }
-                                        })
-                                        .catch(error => console.error("Error:", error));
-                                    }
-                                </script>
-                            <?php
-                            }
-                        } else {
+                               
+                   ?>
+        <div class="col-lg-4 col-md-6">
+            <div class="product__item">
+                <div class="product__item__pic">
+
+
+<img src="<?php echo !empty($row['URL']) ? htmlspecialchars($row['URL']) : 'img/sanpham/default.jpg'; ?>" 
+     alt="<?php echo htmlspecialchars($row['TEN']); ?>" 
+     class="product__image">
+
+                    <ul class="product__hover">
+                        <li>
+                         <a href="img/sanpham/<?php echo htmlspecialchars($row['MOTA']); ?>" class="image-popup">
+
+                                <span class="arrow_expand"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="addToCart(<?php echo $row['IDAO']; ?>, 1)">
+                                <span class="icon_bag_alt"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="product__item__text">
+                    <h6>
+                        <a href="./chitietsanpham.php?id=<?php echo $row['IDAO']; ?>">
+                            <?php echo htmlspecialchars($row['TEN']); ?>
+                        </a>
+                    </h6>
+                    <br>
+                    <div class="product__price">
+                        <?php echo number_format($row['GIA'], 0, '', '.'); ?>đ
+                    </div>
+                 
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function addToCart(productId, quantity) {
+                fetch('cart_handler.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `id=${productId}&quantity=${quantity}`
+                })
+                .then(response => response.text())
+                .then(data => {
+                    if (data === "NOT_LOGGED_IN") {
+                        alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
+                        window.location.href = '/web2/dangnhap.html';
+                    } else if (data === "SUCCESS") {
+                        alert("Thêm sản phẩm thành công!");
+                    } else {
+                        alert("Có lỗi xảy ra!");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            }
+        </script>
+        <?php
+    }   // ✅ kết thúc while mới
+} else {
                             echo '<div style="margin-bottom:45px;margin-top:45px" class="col-lg-12 text-center">Không tìm thấy sản phẩm nào.</div>';
                         }
                         ?>
                         <?php
-                        $sql = "SELECT COUNT(*) AS count FROM sp JOIN loaisp ON loaisp.IDLSP = sp.IDLSP WHERE sp.STATUS = 'active'";
-                        if ($product) {
-                            $sql .= " AND loaisp.TENLOAI = '$product'";
-                        }
-                        $totalproduct = $conn->query($sql)->fetch_assoc()['count'];
-                        $totalpage = ceil($totalproduct / $limit);
+                        $sql = "SELECT COUNT(*) AS count FROM AO WHERE TRANGTHAI = 1";
+$totalproduct = $conn->query($sql)->fetch_assoc()['count'];
+$totalpage = ceil($totalproduct / $limit);
+
                         ?>
                         <div class="col-lg-12 text-center">
                             <div class="pagination__option">
@@ -239,61 +235,62 @@ if (!isset($_GET['page'])) {
         </div>
     </section>
     <!-- Shop Section End -->
-    <!-- Instagram Begin -->
-    <div class="instagram">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+  
+<!-- Instagram Begin -->
+<div class="instagram">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/2.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/6.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#"></a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/9.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="https://www.instagram.com/_hbaohuyy/">@_hbaohuyy ig</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/11.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/15.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/7.png">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
     <!-- Instagram End -->
     <!-- Footer Section Begin -->
     <footer class="footer">
@@ -304,7 +301,7 @@ if (!isset($_GET['page'])) {
                         <div class="footer__logo">
                             <a href="./index.html"><img src="img/logo.png" alt=""></a>
                         </div>
-                        <p>Trang web bán giày chuyên cung cấp các mẫu giày thời trang, đa dạng từ thể thao đến công sở. Sản phẩm đảm bảo chất lượng cao, với nhiều lựa chọn về kiểu dáng và kích cỡ phù hợp cho mọi lứa tuổi.</p>
+                        <p>Trang web bán áo chuyên cung cấp các mẫu áo thời trang, đa dạng từ áo thun, áo khoác đến áo sơ mi. Sản phẩm đảm bảo chất lượng cao, với nhiều lựa chọn về kiểu dáng và kích cỡ, phù hợp cho mọi lứa tuổi.</p>
                         <div class="footer__payment">
                             <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
                             <a href="#"><img src="img/payment/payment-2.png" alt=""></a>

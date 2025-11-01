@@ -15,24 +15,20 @@
     rel="stylesheet">
 
     <!-- Css Styles -->
-    <link rel="stylesheet" href="web2/css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="web2/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="web2/css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="web2/css/jquery-ui.min.css" type="text/css">
-    <link rel="stylesheet" href="web2/css/magnific-popup.css" type="text/css">
-    <link rel="stylesheet" href="web2/css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="web2/css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="web2/css/style.css" type="text/css">
-    <link rel="stylesheet" href="web2/css/index.css" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+
 
 </head>
 
 <body>
-    <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
-
+   
     <!-- Offcanvas Menu Begin -->
     <div class="offcanvas-menu-overlay"></div>
     <div class="offcanvas-menu-wrapper">
@@ -47,7 +43,7 @@
             </a></li>
         </ul>
         <div class="offcanvas__logo">
-            <a href="../index.html"><img src="web2/img/logo.png" alt=""></a>
+            <a href="../index.html"><img src="img/logo.png" alt=""></a>
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
@@ -57,7 +53,7 @@
     <!-- Offcanvas Menu End -->
 
     <!-- Header Section Begin -->
-   <?php include 'web2/header.php' ?> 
+   <?php include './web2/header.php' ?> 
     <!-- Header Section End -->
 
     <!-- Categories Section Begin -->
@@ -66,10 +62,14 @@
             <div class="row">
                 <div class="col-lg-6 p-0">
                     <div class="categories__item categories__large__item set-bg"
-                    data-setbg="../web2/img/categories/12.jpg">
+                    data-setbg="./img/categories/12.png">
                     <div class="categories__text">
-                        <h1>Nike</h1>
-                        <p><strong style="color: rgb(37, 20, 13);">Thương hiệu Nike ấn tượng với hình Logo như đôi cánh đã miêu tả ý nghĩa trên, điều này đã nhanh chóng trở thành biểu tượng địa vị trong làng thời trang hip hop, thành phố hiện đại nhờ gắn liền với thành công trong việc sản xuất các thiết bị và thời trang thể thao.</strong></p>
+                        <h1>Áo thun</h1>
+                        <p><strong style="color: rgb(37, 20, 13);">Thương hiệu Ashion mang đến những mẫu áo thun thời trang hiện đại dành cho giới trẻ năng động.
+
+Mỗi sản phẩm được thiết kế với chất liệu thoải mái, kiểu dáng tinh tế và phong cách đơn giản nhưng khác biệt, giúp bạn tự tin thể hiện cá tính mọi lúc, mọi nơi.
+
+Ashion – Không chỉ là áo thun, mà là phong cách sống.</strong></p>
                         <a href="sanpham_nike.php">Mua ngay</a>
                     </div>
                 </div>
@@ -77,16 +77,16 @@
             <div class="col-lg-6">
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="../web2/img/categories/3.jpg">
+                        <div class="categories__item set-bg" data-setbg="img/categories/3.png">
                             <div class="categories__text">
-                                <h4>Adidas</h4>
+                                <h4>Áo sơ mi</h4>
                                 <p>13 items</p>
                                 <a href="./sanpham_adidas.php">Mua ngay</a>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="../web2/img/categories/7.jpg">
+                        <div class="categories__item set-bg" data-setbg="img/categories/7.png">
                             <div class="categories__text">
                                 <h4>Liên hệ</h4>
                                 <a href="https://www.instagram.com/_hbaohuyy/">Liên hệ ngay</a>
@@ -94,18 +94,18 @@
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="../web2/img/categories/10.jpg">
+                        <div class="categories__item set-bg" data-setbg="img/categories/10.png">
                             <div class="categories__text">
-                                <h4>Jordan</h4>
+                                <h4>Áo khoác</h4>
                                 <p>159 items</p>
                                 <a href="sanpham_jordan.php">Mua ngay</a>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="../web2/img/categories/8.png">
+                        <div class="categories__item set-bg" data-setbg="img/categories/8.png">
                             <div class="categories__text">
-                                <h4>Phụ kiện</h4>
+                                <h4>Áo vest</h4>
                                 <p>4 items</p>
                                 <a href="sanpham_nike.php">Shop now</a>
                             </div>
@@ -118,113 +118,32 @@
 </section>
 <!-- Categories Section End -->
 
-<!-- Product Section Begin -->
-<section class="product spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-4">
-                    <div class="section-title">
-                        <h4>Sản phẩm mới</h4>
-                    </div>
-                </div>
-                <div class="col-lg-8 col-md-8">
-                    <ul class="filter__controls">
-                        <li class="active" data-filter="*">Tất cả</li>
-                        <?php
-                        // Kết nối cơ sở dữ liệu
-                        $conn = new mysqli("localhost", "root", "", "web_db");
-
-                        if ($conn->connect_error) {
-                            die("Kết nối thất bại: " . $conn->connect_error);
-                        }
-
-                        // Truy vấn danh sách thương hiệu từ bảng loaisp
-                        $sql_brands = "SELECT TENLOAI FROM loaisp";
-                        $result_brands = $conn->query($sql_brands);
-
-                        if ($result_brands->num_rows > 0) {
-                            while ($brand_row = $result_brands->fetch_assoc()) {
-                                $brand_name = htmlspecialchars($brand_row['TENLOAI']);
-                                echo '<li data-filter="' . $brand_name . '">' . $brand_name . '</li>';
-                            }
-                        }
-                        ?>
-                    </ul>
-                </div>
-            </div>
-            <div class="owl-carousel owl-theme product-slider">
-                <?php
-                // Truy vấn lấy 8 sản phẩm mới nhất (dựa trên IDSP giảm dần)
-                $sql = "SELECT sp.*, loaisp.TENLOAI 
-                        FROM sp 
-                        JOIN loaisp ON sp.IDLSP = loaisp.IDLSP 
-                        ORDER BY sp.IDSP DESC LIMIT 8";
-                $result = $conn->query($sql);
-
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        // Lấy thương hiệu từ cơ sở dữ liệu
-                        $brand = htmlspecialchars($row['TENLOAI']);
-
-                        // Hiển thị sản phẩm với thuộc tính data-brand
-                        echo '<div class="product__item mix" data-brand="' . $brand . '">';
-                        echo '<div class="product__item__pic set-bg" data-setbg="' . htmlspecialchars($row["URL"]) . '">';
-                        echo '<div class="label new">Mới</div>';
-                        echo '<ul class="product__hover">';
-                        echo '<li><a href="' . htmlspecialchars($row["URL"]) . '" class="image-popup"><span class="arrow_expand"></span></a></li>';
-                        echo '<li><a href="#"><span class="icon_bag_alt"></span></a></li>';
-                        echo '</ul>';
-                        echo '</div>';
-                        echo '<div class="product__item__text">';
-                        echo '<h6><a href="./chitietsanpham.html" target="_blank">' . htmlspecialchars($row["TEN"]) . '</a></h6>';
-                        echo '<div class="rating">';
-                        echo '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>';
-                        echo '</div>';
-                        echo '<div class="product__price">' . number_format(str_replace('.', '', $row["GIABAN"]), 0) . ' đ';
-                        if (!empty($row["GIABANKM"])) {
-                            echo ' <span>' . number_format(str_replace('.', '', $row["GIABANKM"]), 0) . ' đ</span>';
-                        }
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</div>';
-                    }
-                } else {
-                    echo '<p style="text-align:center; width:100%;">Không có sản phẩm mới nào.</p>';
-                }
-
-                // Đóng kết nối
-                $conn->close();
-                ?>
-            </div>
-        </div>
-    </section>
 <!-- Product Section End -->
 
 
 
 <!-- Banner Section Begin -->
-<section class="banner set-bg" data-setbg="img/banner/banner1.jpg">
+<section class="banner set-bg" data-setbg="img/banner/banner1.png">
     <div class="container">
         <div class="row">
             <div class="col-xl-7 col-lg-8 m-auto">
                 <div class="banner__slider owl-carousel">
                     <div class="banner__item">
                         <div class="banner__text">
-                            <h1>Nike's Just do it</h1>
-                            <a href="../web2/sanpham_nike.php">Mua ngay</a>
+                            <h1>Thoải mái từng chuyển động – tự tin mọi khoảnh khắc.</h1>
+                            <a href="sanpham_nike.php">Mua ngay</a>
                         </div>
                     </div>
                     <div class="banner__item">
                         <div class="banner__text">
-                            <h1>Adidas's Impossible is nothing</h1>
-                            <a href="../web2/sanpham_nike.php">Mua ngay</a>
+                            <h1>Bản lĩnh trong từng lớp vải – phong cách dẫn đầu</h1>
+                            <a href="sanpham_nike.php">Mua ngay</a>
                         </div>
                     </div>
                     <div class="banner__item">
                         <div class="banner__text">
-                            <span>The Chloe Collection</span>
-                            <h1>Jordan's Our Turn</h1>
-                            <a href="../web2/sanpham.php">Mua ngay</a>
+                            <h1>Thanh lịch từ chi tiết – đẳng cấp từ phong thái</h1>
+                            <a href="sanpham.php">Mua ngay</a>
                         </div>
                     </div>
                 </div>
@@ -239,7 +158,7 @@
         <div class="row">
             <div class="col-lg-6 p-0">
                 <div class="discount__pic">
-                    <img src="../web2/img/discount.jpg" alt="">
+                    <img src="img/discount.png" alt="">
                 </div>
             </div>
             <div class="col-lg-6 p-0">
@@ -317,7 +236,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="img/instagram/2.jpg">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/2.png">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
                         <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
@@ -325,7 +244,7 @@
                 </div>
             </div>
             <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="img/instagram/6.jpg">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/6.png">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
                         <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
@@ -333,7 +252,7 @@
                 </div>
             </div>
             <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="img/instagram/9.jpg">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/9.png">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
                         <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
@@ -349,7 +268,7 @@
                 </div>
             </div>
             <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="img/instagram/15.jpg">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/15.png">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
                         <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
@@ -357,7 +276,7 @@
                 </div>
             </div>
             <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="img/instagram/7.jpg">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/7.png">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
                         <a href="https://www.instagram.com/minhla.tu/" target="_blank">@nhom4</a>
@@ -378,7 +297,7 @@
                     <div class="footer__logo">
                         <a href="./index.html"><img src="img/logo.png" alt=""></a>
                     </div>
-                    <p>Trang web bán giày chuyên cung cấp các mẫu giày thời trang, đa dạng từ thể thao đến công sở. Sản phẩm đảm bảo chất lượng cao, với nhiều lựa chọn về kiểu dáng và kích cỡ phù hợp cho mọi lứa tuổi.</p>
+                    <p>Trang web bán áo chuyên cung cấp các mẫu áo thời trang, đa dạng từ áo thun, áo khoác đến áo sơ mi. Sản phẩm đảm bảo chất lượng cao, với nhiều lựa chọn về kiểu dáng và kích cỡ, phù hợp cho mọi lứa tuổi.</p>
                     <div class="footer__payment">
                         <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
                         <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
@@ -453,16 +372,16 @@
 <!-- Search End -->
 
 <!-- Js Plugins -->
-<script src="web2/js/jquery-3.3.1.min.js"></script>
-<script src="web2/js/bootstrap.min.js"></script>
-<script src="web2/js/jquery.magnific-popup.min.js"></script>
-<script src="web2/js/jquery-ui.min.js"></script>
-<script src="web2/js/mixitup.min.js"></script>
-<script src="web2/js/jquery.countdown.min.js"></script>
-<script src="web2/js/jquery.slicknav.js"></script>
-<script src="web2/js/owl.carousel.min.js"></script>
-<script src="web2/js/jquery.nicescroll.min.js"></script>
-<script src="web2/js/main.js"></script>
-<script src="web2/js/authen.js"></script>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/mixitup.min.js"></script>
+<script src="js/jquery.countdown.min.js"></script>
+<script src="js/jquery.slicknav.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/jquery.nicescroll.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/authen.js"></script>
 </body>
 </html>
